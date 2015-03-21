@@ -3,6 +3,7 @@
 //  ConnectGame
 //
 //  Created by Erik Buck on 6/5/13.
+//  Updated assignment: Kevin Porter
 //
 
 #include "AlphaBeta.h"
@@ -33,21 +34,26 @@ int AbstractBoard::alphaBeta(
 {
    int score = this->score();
    nextBoardPtr = NULL;
-   
+
    AbstractBoard::boards availableMoves =
       allLegalMovesForPlayer(player);
-   
+
    if(AbstractBoard::None != winner())
    {  // winner found
       return score;
    }
+   /*
+   * WARNING: An evaluation depth of 9 or more starts to use a tremendous
+   * amount of memory (4GB+). If memory constrained, adjust the depth to
+   * 8 or less.
+   */
    else if(evaluationDepth() <= depth ||
       0 == availableMoves.size())
    {  // search limit reached or no legal moves
       return score;
    }
    else
-   {  // ToDo: Implement MiniMax or ALphaBeta here
+   {
 
       // This default implementation makes no attempt to find
       // a winning play. You must implement a better algorithm
@@ -60,6 +66,14 @@ int AbstractBoard::alphaBeta(
       *  overwritten.
       */
       AbstractBoard *return_board = NULL;
+
+      /*
+      * This conditional breaks out into two nearly identical algorithms.
+      * Each player is either a minimizer or a maximizer. It will recursively
+      * call alphabeta(), looking for the next likely move, until either there
+      * are no moves left (board filled or winner declared) or until the max
+      * depth search (default 9, in AlphaBeta.h) is reached.
+      */
 
       if (player == AbstractBoard::Maximizer) {
          int max_value = INT_MIN;
@@ -77,11 +91,11 @@ int AbstractBoard::alphaBeta(
                   if (max_value > alpha) {
                      alpha = max_value;
                   }
-                  if (beta <= alpha) {
-                     break;
-                  }
                   if (depth == 0) {
                      return_board = (*it);
+                  }
+                  if (beta <= alpha) {
+                     break;
                   }
                }
             }
@@ -104,11 +118,11 @@ int AbstractBoard::alphaBeta(
                   if (min_value < beta) {
                      beta = min_value;
                   }
-                  if (beta <= alpha) {
-                     break;
-                  }
                   if (depth == 0) {
                      return_board = (*it);
+                  }
+                  if (beta <= alpha) {
+                     break;
                   }
                }
             }
@@ -122,7 +136,9 @@ int AbstractBoard::alphaBeta(
          return_board = NULL;
          return nextBoardPtr->score();
       } else if (depth == 0) {
-         assert(return_board != NULL);
+         //assert(return_board != NULL);
+         // I have not encountered this happening, but just in case the
+         // algorithm fails, pick a random(ish) move.
          --it;
          nextBoardPtr = (*it);
       } else {
