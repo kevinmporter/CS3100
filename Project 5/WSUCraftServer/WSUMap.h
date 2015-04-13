@@ -78,7 +78,7 @@
 /// point large distances in an instant, but when doing so
 /// does not view all of the terrain between the old
 /// and new view points.
-///
+/// 
 /// Your assignment is to implement the blockTypeIDAt() and
 /// setBlockTypeIDAt() member functions of the following
 /// WSUMap class. Your instructor will test your
@@ -118,15 +118,15 @@ public:
    WSUMap()
    {
    }
-
-
-   //////////////////////////////////////////////zz
+   
+   
+   //////////////////////////////////////////////
    /// This function returns the block type
    /// identifier for the specified x, y, z
    /// position within the map.
    uint8_t blockTypeIDAt(
       uint32_t x, uint32_t y, uint32_t z) const;
-
+   
    ////////////////////////////////////////////////////////
    /// The following values enumerate a subset of possible
    /// block type identifiers. The identifier 0 is
@@ -152,7 +152,7 @@ public:
       DeadShrup,
       LiveShrub,
       TallGrass,
-      Cloud,
+      Cloud = 66,
    };
 };
 

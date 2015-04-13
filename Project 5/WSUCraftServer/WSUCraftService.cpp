@@ -164,7 +164,7 @@ void WSUCraftService::processReceivedRequest(
                                              unsigned int clientSid)
 {
    const uint32_t chunkWidth = 32;
-   const uint32_t chunkHeight = 128;
+   const uint32_t chunkHeight = 256;
    const uint32_t chunkLength = 32;
    uint32_t x;
    uint32_t z;
