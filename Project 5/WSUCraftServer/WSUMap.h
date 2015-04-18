@@ -11,6 +11,26 @@
 #include <stdio.h>
 #include <assert.h>
 #include <algorithm>
+#include <map>
+#include <string>
+
+
+class triple {
+public:
+   uint32_t x;
+   uint32_t y;
+   uint32_t z;
+
+   triple(uint32_t nx, uint32_t ny, uint32_t nz) {
+      x = nx;
+      y = ny;
+      z = nz;
+   }
+
+   bool operator<(const triple &other) const {
+      return (x < other.x && y < other.y && z < other.z);
+   }
+};
 
 ///////////////////////////////////////////////////////////
 /// Instances of the WSUMap class encapsulate a "map"
@@ -113,6 +133,11 @@ public:
    static const uint32_t width = 1 << 12;
    static const uint32_t length = 1 << 12;
    static const uint32_t height = 1 << 8;
+   static const uint32_t total = width * length * height;
+
+   std::map<uint8_t, std::weak_ptr<triple>> blockMap;
+
+   
 
 
    WSUMap()
@@ -126,6 +151,9 @@ public:
    /// position within the map.
    uint8_t blockTypeIDAt(
       uint32_t x, uint32_t y, uint32_t z) const;
+
+   uint8_t setBlockTypeIDAt(
+           uint32_t x, uint32_t y, uint32_t z) const;
    
    ////////////////////////////////////////////////////////
    /// The following values enumerate a subset of possible
@@ -155,6 +183,7 @@ public:
       Cloud = 66,
    };
 };
+
 
 
 #endif /* defined(__WSUMap__WSUMap__) */
