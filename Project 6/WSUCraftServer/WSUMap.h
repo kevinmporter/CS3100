@@ -13,24 +13,8 @@
 #include <algorithm>
 #include <map>
 #include <string>
-
-
-class triple {
-public:
-   uint32_t x;
-   uint32_t y;
-   uint32_t z;
-
-   triple(uint32_t nx, uint32_t ny, uint32_t nz) {
-      x = nx;
-      y = ny;
-      z = nz;
-   }
-
-   bool operator<(const triple &other) const {
-      return (x < other.x && y < other.y && z < other.z);
-   }
-};
+#include "octree.h"
+#include <memory>
 
 ///////////////////////////////////////////////////////////
 /// Instances of the WSUMap class encapsulate a "map"
@@ -133,14 +117,10 @@ public:
    static const uint32_t width = 1 << 12;
    static const uint32_t length = 1 << 12;
    static const uint32_t height = 1 << 8;
-   static const uint32_t total = width * length * height;
-
-   std::map<uint32_t, uint8_t> blockMap;
-
-   
+   Octree<unsigned char> blockTree;
 
 
-   WSUMap()
+   WSUMap() : blockTree(4096)
    {
    }
 

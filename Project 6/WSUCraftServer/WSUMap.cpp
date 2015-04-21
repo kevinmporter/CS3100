@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <math.h>
 #include <string>
+#include "octree.h"
 
 uint32_t WSUMap::getKey(uint32_t x,
                         uint32_t y,
@@ -30,9 +31,9 @@ uint8_t WSUMap::setBlockTypeIDAt(
         uint8_t someBlock, uint32_t x, uint32_t y, uint32_t z) {
 
 	  uint8_t result = blockTypeIDAt(x, y, z);
-	  const uint32_t key = getKey(x, y, z);
+	  //const uint32_t key = getKey(x, y, z);
 
-	  blockMap[key] = someBlock;
+	  blockTree(x, y, z) = someBlock;
 
    return result;
 }
@@ -43,12 +44,12 @@ uint8_t WSUMap::blockTypeIDAt(
    uint32_t x, uint32_t y, uint32_t z) const
 {
     uint8_t result = WSUMap::Air;
-	uint32_t key = getKey(x, y, z);
+	//uint32_t key = getKey(x, y, z);
 
-  std::map<uint32_t, uint8_t>::const_iterator it = blockMap.find(key);
+  //std::map<uint32_t, uint8_t>::const_iterator it = blockMap.find(key);
 
-  if (blockMap.end() != it) {
-    result = it->second;
+  if (blockTree(x, y, z) != blockTree.emptyValue()) {
+    result = blockTree(1, 2, 3);
   } else {
 
    //uint32_t modifierX = 0;
