@@ -15,12 +15,12 @@
 class WSUCraftService
 {
 public:
-   void provideMapDataToClients(const WSUMap &aMap);
+   void provideMapDataToClients(WSUMap &aMap);
    
 private:
    void processReceivedRequest(const char *recvBuffer,
       ssize_t recvLength,
-      const WSUMap &aMap,
+      WSUMap &aMap,
       unsigned int clientSid);
 };
 

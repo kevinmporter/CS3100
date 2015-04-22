@@ -136,6 +136,10 @@ public:
 
    uint8_t setBlockTypeIDAt(
            uint8_t someBlock, uint32_t x, uint32_t y, uint32_t z);
+
+  void purgeBlockAt(uint32_t x,
+                    uint32_t y,
+                    uint32_t z);
    
    ////////////////////////////////////////////////////////
    /// The following values enumerate a subset of possible

@@ -74,7 +74,7 @@ void reportIPInfo()
 
 ///////////////////////////////////////////////////////////
 void WSUCraftService::provideMapDataToClients(
-                                              const WSUMap &aMap)
+                                              WSUMap &aMap)
 {
    ////////////////////////////////////////////////////////
    // local variables for socket connection
@@ -160,7 +160,7 @@ void WSUCraftService::provideMapDataToClients(
 void WSUCraftService::processReceivedRequest(
                                              const char *recvBuffer,
                                              ssize_t recvLength,
-                                             const WSUMap &aMap,
+                                             WSUMap &aMap,
                                              unsigned int clientSid)
 {
    const uint32_t chunkWidth = 32;
@@ -185,6 +185,7 @@ void WSUCraftService::processReceivedRequest(
             {
                chunkStorage[i][j][k] =
                aMap.blockTypeIDAt(i + x, j, k + z);
+	       aMap.setBlockTypeIDAt(chunkStorage[i][j][k], i + x, j, k + z);
             }
          }
       }

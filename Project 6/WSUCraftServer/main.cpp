@@ -14,7 +14,8 @@ int main(void)
    WSUCraftService netService;
    
    netService.provideMapDataToClients(map);
-   
+
+
    exit(0);
    return (0);        
 }

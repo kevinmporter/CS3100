@@ -13,15 +13,19 @@
 #include <math.h>
 #include <string>
 #include "octree.h"
+#include <cassert>
 
 
 uint8_t WSUMap::setBlockTypeIDAt(
         uint8_t someBlock, uint32_t x, uint32_t y, uint32_t z) {
 
 	  // there could be some logic here to improve memory management
-	  //
+	  // (drastically)
 	  uint8_t result = blockTypeIDAt(x, y, z);
-	  blockTree(x, y, z) = someBlock; //
+	  if (result != WSUMap::Air) {
+		blockTree(x % 336, y % 336, z % 256) = result;
+	}
+	   //
 
    return result;
 }
@@ -36,8 +40,8 @@ uint8_t WSUMap::blockTypeIDAt(
     uint8_t result = WSUMap::Air;
 
   // get the value stored in the tree
-  if (blockTree(x, y, z) != blockTree.emptyValue()) {
-    result = blockTree(x, y, z);
+  if (blockTree(x % 336, y % 336, z % 256) != blockTree.emptyValue()) {
+    result = blockTree(x % 336, y % 336, z % 256);
   } else {
     // no value stored yet, so generate it
 
@@ -96,4 +100,10 @@ uint8_t WSUMap::blockTypeIDAt(
 
    return result;
 }
+
+  void WSUMap::purgeBlockAt(uint32_t x,
+                    uint32_t y,
+                    uint32_t z) {
+		      blockTree.erase(x % 336, y % 336, z % 256);
+		    }
 
