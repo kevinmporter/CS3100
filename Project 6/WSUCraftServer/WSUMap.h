@@ -120,7 +120,7 @@ public:
    Octree<unsigned char> blockTree;
 
 
-   WSUMap() : blockTree(4096)
+   WSUMap() : blockTree(65536)
    {
    }
 
