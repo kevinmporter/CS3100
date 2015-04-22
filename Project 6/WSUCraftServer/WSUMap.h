@@ -1,4 +1,6 @@
 //
+//  Kevin Porter
+//
 //  WSUMap.h
 //  WSUMap
 //
@@ -117,18 +119,14 @@ public:
    static const uint32_t width = 1 << 12;
    static const uint32_t length = 1 << 12;
    static const uint32_t height = 1 << 8;
-   Octree<unsigned char> blockTree;
+
+   Octree<unsigned char> blockTree; // using octree package included
 
 
    WSUMap() : blockTree(65536)
    {
    }
 
-  uint32_t getKey(uint32_t x,
-                  uint32_t y,
-                  uint32_t z) const;
-   
-   
    //////////////////////////////////////////////
    /// This function returns the block type
    /// identifier for the specified x, y, z

@@ -1,4 +1,6 @@
 //
+// Kevin Porter
+//
 //  WSUMap.cpp
 //  WSUMap
 //
@@ -12,28 +14,14 @@
 #include <string>
 #include "octree.h"
 
-uint32_t WSUMap::getKey(uint32_t x,
-                        uint32_t y,
-                        uint32_t z) const {
-
-			  // here, change to std::hash<std::string>
-			  // generate string from points, output hash
-			  // hash becomes key
-			const uint32_t key =
-			    ((x & 0x1fff) << 31) |
-			    ((y & 0x3f) << 9) |
-			    (z & 0x1fff);
-
-			return key;
-			}
 
 uint8_t WSUMap::setBlockTypeIDAt(
         uint8_t someBlock, uint32_t x, uint32_t y, uint32_t z) {
 
+	  // there could be some logic here to improve memory management
+	  //
 	  uint8_t result = blockTypeIDAt(x, y, z);
-	  //const uint32_t key = getKey(x, y, z);
-
-	  blockTree(x, y, z) = someBlock;
+	  blockTree(x, y, z) = someBlock; //
 
    return result;
 }
@@ -43,14 +31,15 @@ uint8_t WSUMap::setBlockTypeIDAt(
 uint8_t WSUMap::blockTypeIDAt(
    uint32_t x, uint32_t y, uint32_t z) const
 {
+
+  // if nothing is there, it's air
     uint8_t result = WSUMap::Air;
-	//uint32_t key = getKey(x, y, z);
 
-  //std::map<uint32_t, uint8_t>::const_iterator it = blockMap.find(key);
-
+  // get the value stored in the tree
   if (blockTree(x, y, z) != blockTree.emptyValue()) {
-    result = blockTree(1, 2, 3);
+    result = blockTree(x, y, z);
   } else {
+    // no value stored yet, so generate it
 
    //uint32_t modifierX = 0;
    uint32_t modifierY = 0;
