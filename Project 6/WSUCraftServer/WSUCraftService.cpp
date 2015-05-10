@@ -27,8 +27,8 @@
 
 ///////////////////////////////////////////////////////////
 #define PORT_NUM (8081)        // Port number
-#define PEND_CONNECTIONS (100) // num connections to hold
-#define BUFFER_SIZE (1024)     // buffer size in bytes
+#define PEND_CONNECTIONS (5) // num connections to hold
+#define BUFFER_SIZE (2047)     // buffer size in bytes
 
 
 #include <stdio.h>
@@ -43,9 +43,9 @@ void reportIPInfo()
    struct ifaddrs * ifAddrStruct = NULL;
    struct ifaddrs * ifa = NULL;
    void * tmpAddrPtr = NULL;
-   
+
    getifaddrs(&ifAddrStruct);
-   
+
    for (ifa = ifAddrStruct; ifa != NULL; ifa = ifa->ifa_next)
    {
       if (ifa ->ifa_addr->sa_family == AF_INET)
@@ -65,7 +65,7 @@ void reportIPInfo()
          printf("%s IP Address %s\n", ifa->ifa_name, addressBuffer);
       }
    }
-   
+
    if (ifAddrStruct != NULL)
    {
       freeifaddrs(ifAddrStruct);
@@ -74,7 +74,7 @@ void reportIPInfo()
 
 ///////////////////////////////////////////////////////////
 void WSUCraftService::provideMapDataToClients(
-                                              WSUMap &aMap)
+                                              const WSUMap &aMap)
 {
    ////////////////////////////////////////////////////////
    // local variables for socket connection
@@ -83,11 +83,11 @@ void WSUCraftService::provideMapDataToClients(
    unsigned int          clientSid;     // Client socket
    struct sockaddr_in    clientAddr;  // Client address
    socklen_t             addrLength;     // Address length
-   
+
    ////////////////////////////////////////////////////////
    // create a new socket
    serverSid = socket(AF_INET, SOCK_STREAM, 0);
-   
+
    ////////////////////////////////////////////////////////
    // fill-in address information, and then bind it
    serverAddr.sin_family = AF_INET;
@@ -95,14 +95,14 @@ void WSUCraftService::provideMapDataToClients(
    serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
    bind(serverSid, (struct sockaddr *)&serverAddr,
         sizeof(serverAddr));
-   
+
    ////////////////////////////////////////////////////////
    // Listen for connections and then accept
    listen(serverSid, PEND_CONNECTIONS);
-   
+
    reportIPInfo();
    printf("WSUCraftServer Started on Port:%d\n", PORT_NUM);
-   
+
    ////////////////////////////////////////////////////////
    // Server main loop
    while(true)
@@ -112,7 +112,7 @@ void WSUCraftService::provideMapDataToClients(
       clientSid = accept(serverSid,
                          (struct sockaddr *)&clientAddr,
                          &addrLength);
-      
+
       if (clientSid == 0)
       {
          fprintf(stderr,
@@ -124,15 +124,15 @@ void WSUCraftService::provideMapDataToClients(
       {
          //         fprintf(stderr,
          //                 "Accepted connection ...\n");
-         
+
          char recvBuffer[BUFFER_SIZE+1];
          ssize_t recvLength;
-         
+
          recvLength = recv(clientSid,
                            recvBuffer,
                            BUFFER_SIZE,
                            0);
-         
+
          if (0 > recvLength)
          {
             fprintf(stderr,
@@ -145,9 +145,11 @@ void WSUCraftService::provideMapDataToClients(
             processReceivedRequest(
                                    recvBuffer, recvLength, aMap, clientSid);
          }
+         close(clientSid);
+         clientSid = 0;
       }
    }
-   
+
    fprintf(stderr,
            "Closing ...\n");
    ////////////////////////////////////////////////////////
@@ -160,7 +162,7 @@ void WSUCraftService::provideMapDataToClients(
 void WSUCraftService::processReceivedRequest(
                                              const char *recvBuffer,
                                              ssize_t recvLength,
-                                             WSUMap &aMap,
+                                             const WSUMap &aMap,
                                              unsigned int clientSid)
 {
    const uint32_t chunkWidth = 32;
@@ -168,14 +170,14 @@ void WSUCraftService::processReceivedRequest(
    const uint32_t chunkLength = 32;
    uint32_t x;
    uint32_t z;
-   
+
    sscanf(recvBuffer, "%u %u", &x, &z);
-   
+
    if((x + chunkWidth - 1) < aMap.width && (z + chunkLength - 1) < aMap.length)
    {
       uint8_t chunkStorage[chunkWidth][chunkHeight][chunkLength];
       //memset(chunkStorage, WSUMap::Air, sizeof(chunkStorage));
-      
+
       // Collect all the data for a chunk
       for(uint32_t i = 0; i < chunkWidth; i++)
       {
@@ -185,22 +187,21 @@ void WSUCraftService::processReceivedRequest(
             {
                chunkStorage[i][j][k] =
                aMap.blockTypeIDAt(i + x, j, k + z);
-	       aMap.setBlockTypeIDAt(chunkStorage[i][j][k], i + x, j, k + z);
             }
          }
       }
-      
+
       // Send the compressed chunk data
       Bytef compressedChunkStorage[chunkWidth][chunkHeight][chunkLength];
       z_stream strm;
-      
+
       strm.zalloc = Z_NULL;
       strm.zfree = Z_NULL;
       strm.opaque = Z_NULL;
       strm.total_out = 0;
       strm.next_in = (Bytef *)chunkStorage;
       strm.avail_in = (uInt)sizeof(chunkStorage);
-      
+
       // Compresssion Levels:
       //   Z_NO_COMPRESSION
       //   Z_BEST_SPEED
@@ -216,28 +217,32 @@ void WSUCraftService::processReceivedRequest(
          fprintf(stderr, "Error: deflateInit2 ...\n");
          return;
       }
-      
+
       do
       {
          strm.next_out =
          (Bytef *)(compressedChunkStorage + strm.total_out);
          strm.avail_out = (uInt)(sizeof(compressedChunkStorage) -
                                  (size_t)strm.total_out);
-         
+
          deflate(&strm, Z_FINISH);
-         
+
       }
       while (strm.avail_out == 0);
-      
+
       deflateEnd(&strm);
-      
+
       uint32_t numBytesToSend = (uint32_t)strm.total_out;
       send(clientSid, &numBytesToSend, sizeof(numBytesToSend), 0);
       ssize_t count = send(clientSid,
-                           compressedChunkStorage,         
+                           compressedChunkStorage,
                            numBytesToSend,
                            0);
-      
+
       printf("Chunk at {%u %u} Num bytes sent = %lu\n", x, z, (unsigned long)count);
+   }
+   else
+   {
+      printf("Chunk at {%u %u} can't be sent\n", x, z);
    }
 }

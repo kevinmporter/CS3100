@@ -84,7 +84,7 @@
 /// point large distances in an instant, but when doing so
 /// does not view all of the terrain between the old
 /// and new view points.
-/// 
+///
 /// Your assignment is to implement the blockTypeIDAt() and
 /// setBlockTypeIDAt() member functions of the following
 /// WSUMap class. Your instructor will test your
@@ -123,10 +123,12 @@ public:
    Octree<unsigned char> blockTree; // using octree package included
 
 
-   WSUMap() : blockTree(65536)
+   WSUMap() : blockTree(512)
    {
    }
 
+
+  void loadMap();
    //////////////////////////////////////////////
    /// This function returns the block type
    /// identifier for the specified x, y, z
@@ -137,10 +139,7 @@ public:
    uint8_t setBlockTypeIDAt(
            uint8_t someBlock, uint32_t x, uint32_t y, uint32_t z);
 
-  void purgeBlockAt(uint32_t x,
-                    uint32_t y,
-                    uint32_t z);
-   
+
    ////////////////////////////////////////////////////////
    /// The following values enumerate a subset of possible
    /// block type identifiers. The identifier 0 is

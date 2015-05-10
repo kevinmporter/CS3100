@@ -1,4 +1,6 @@
 //
+//  Kevin Porter
+//
 //  WSUMap.h
 //  WSUMap
 //
@@ -13,24 +15,8 @@
 #include <algorithm>
 #include <map>
 #include <string>
-
-
-class triple {
-public:
-   uint32_t x;
-   uint32_t y;
-   uint32_t z;
-
-   triple(uint32_t nx, uint32_t ny, uint32_t nz) {
-      x = nx;
-      y = ny;
-      z = nz;
-   }
-
-   bool operator<(const triple &other) const {
-      return (x < other.x && y < other.y && z < other.z);
-   }
-};
+#include "octree.h"
+#include <memory>
 
 ///////////////////////////////////////////////////////////
 /// Instances of the WSUMap class encapsulate a "map"
@@ -98,7 +84,7 @@ public:
 /// point large distances in an instant, but when doing so
 /// does not view all of the terrain between the old
 /// and new view points.
-/// 
+///
 /// Your assignment is to implement the blockTypeIDAt() and
 /// setBlockTypeIDAt() member functions of the following
 /// WSUMap class. Your instructor will test your
@@ -133,22 +119,16 @@ public:
    static const uint32_t width = 1 << 12;
    static const uint32_t length = 1 << 12;
    static const uint32_t height = 1 << 8;
-   static const uint32_t total = width * length * height;
 
-   std::map<uint32_t, uint8_t> blockMap;
-
-   
+   Octree<unsigned char> blockTree; // using octree package included
 
 
-   WSUMap()
+   WSUMap() : blockTree(512)
    {
    }
 
-  uint32_t getKey(uint32_t x,
-                  uint32_t y,
-                  uint32_t z) const;
-   
-   
+
+  void loadMap();
    //////////////////////////////////////////////
    /// This function returns the block type
    /// identifier for the specified x, y, z
@@ -158,7 +138,8 @@ public:
 
    uint8_t setBlockTypeIDAt(
            uint8_t someBlock, uint32_t x, uint32_t y, uint32_t z);
-   
+
+
    ////////////////////////////////////////////////////////
    /// The following values enumerate a subset of possible
    /// block type identifiers. The identifier 0 is

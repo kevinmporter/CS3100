@@ -14,6 +14,7 @@
 #include <string>
 #include "octree.h"
 #include <cassert>
+#include <iostream>
 
 
 uint8_t WSUMap::setBlockTypeIDAt(
@@ -21,13 +22,13 @@ uint8_t WSUMap::setBlockTypeIDAt(
 
 	  // there could be some logic here to improve memory management
 	  // (drastically)
-	  uint8_t result = blockTypeIDAt(x, y, z);
-	  if (result != WSUMap::Air) {
-		blockTree(x % 336, y % 336, z % 256) = result;
+	  //uint8_t result = blockTypeIDAt(x, y, z);
+	  if (someBlock != WSUMap::Air) {
+		blockTree(x % 512, y % 256, z % 512) = someBlock;
 	}
 	   //
 
-   return result;
+   return someBlock;
 }
 
 
@@ -40,8 +41,8 @@ uint8_t WSUMap::blockTypeIDAt(
     uint8_t result = WSUMap::Air;
 
   // get the value stored in the tree
-  if (blockTree(x % 336, y % 336, z % 256) != blockTree.emptyValue()) {
-    result = blockTree(x % 336, y % 336, z % 256);
+  if (blockTree(x % 512, y % 256, z % 512) != blockTree.emptyValue()) {
+    result = blockTree(x % 512, y % 256, z % 512);
   } else {
     // no value stored yet, so generate it
 
@@ -101,9 +102,14 @@ uint8_t WSUMap::blockTypeIDAt(
    return result;
 }
 
-  void WSUMap::purgeBlockAt(uint32_t x,
-                    uint32_t y,
-                    uint32_t z) {
-		      blockTree.erase(x % 336, y % 336, z % 256);
-		    }
+void WSUMap::loadMap() {
+  std::cout << "Hang on, loading map into memory..." << std::endl;
+  for (uint32_t x = 0; x < 512; ++x) {
+    for (uint32_t y = 0; y < 256; ++y) {
+      for (uint32_t z = 0; z < 512; ++z) {
+	setBlockTypeIDAt(blockTypeIDAt(x, y, z), x, y, z);
+      }
+    }
+  }
+}
 

@@ -16,7 +16,7 @@ class WSUCraftService
 {
 public:
    void provideMapDataToClients(const WSUMap &aMap);
-   
+
 private:
    void processReceivedRequest(const char *recvBuffer,
       ssize_t recvLength,
