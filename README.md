@@ -7,7 +7,9 @@ formatting, variable names, and so on if you're going to reuse this code (which
 ## Please ##
 My ultimate goal is for this repository to help understand concepts. You are
 hurting only yourself if you simply copy-paste code and make no attempts to
-understand what is actually happening. That said...
+understand what is actually happening. Please note that using this code as
+anything more than a helpful resource is a violation of academic integrity
+policies.
 
 # Need Help? #
 I don't anticipate ever receiving any messages on this, so I'll gladly offer to
