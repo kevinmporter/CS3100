@@ -1,9 +1,8 @@
 # CS-3100 #
-This repo contains all turned-in work for CS-3100. All projects will provide
-correct solutions to assignments. Feel free to use this as a guide to help you
-through the course. I'd recommend you remove my name and maybe toy around with
-formatting, variable names, and so on if you're going to reuse this code (which
-   I happily encourage you to do!).
+This repository may or may not provide valid solutions for CS-3100. Do not
+reuse code, please. This is meant as an archive for my own code and as a helpful
+guide to anyone who might stumble upon it. Do not consider these solutions to be
+valid.
 ## Please ##
 My ultimate goal is for this repository to help understand concepts. You are
 hurting only yourself if you simply copy-paste code and make no attempts to
